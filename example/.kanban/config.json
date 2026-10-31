@@ -1,0 +1,80 @@
+{
+  "first_column": "未着手",
+  "done": {
+    "name": "完了"
+  },
+  "needs_action": {
+    "when": "design_review.md",
+    "unless": "approved"
+  },
+  "stages": [
+    {
+      "name": "デザイン",
+      "files": [
+        "design.md"
+      ],
+      "agent": {
+        "name": "Claude Code (haiku)",
+        "command": [
+          "claude",
+          "--model",
+          "haiku"
+        ],
+        "prompt_flag": null
+      }
+    },
+    {
+      "name": "デザインレビュー",
+      "files": [
+        "design_review.md"
+      ],
+      "agent": {
+        "name": "Claude Code (haiku)",
+        "command": [
+          "claude",
+          "--model",
+          "haiku"
+        ],
+        "prompt_flag": null
+      }
+    },
+    {
+      "name": "実装とテスト",
+      "files": [
+        "approved",
+        "impl.md"
+      ],
+      "agent": {
+        "name": "agy",
+        "command": [
+          "agy",
+          "--mode",
+          "accept-edits"
+        ],
+        "prompt_flag": "-i"
+      }
+    },
+    {
+      "name": "レビュー",
+      "files": [
+        "review.md"
+      ],
+      "agent": {
+        "name": "Claude Code (haiku)",
+        "command": [
+          "claude",
+          "--model",
+          "haiku"
+        ],
+        "prompt_flag": null
+      }
+    }
+  ],
+  "move_on": [
+    {
+      "file": "approved",
+      "to": "実装とテスト"
+    }
+  ],
+  "_notes": "work_dir を省くとプロジェクトのフォルダ。stages: 列の並び=この順。state(「<工程名> 作業中|完了 <担当>」)から列を決める。move_on: そのファイルができたらカードを指定の工程の列へ進める。files: 詳細に出すファイル。agent.command: 起動コマンド(~可・PATH に無ければ絶対パス)。prompt_flag: 最初の指示を渡すフラグ(null=最後の引数)。roles.md の節名は工程名と同じ。needs_action: when があり unless が無いと「要対応」。"
+}
